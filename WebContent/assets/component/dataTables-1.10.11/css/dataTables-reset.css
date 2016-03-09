@@ -1,0 +1,58 @@
+
+table.table thead .sorting { background: url('../images/sort_both.png') no-repeat center right; }
+table.table thead .sorting_asc { background: url('../images/sort_asc.png') no-repeat center right; }
+table.table thead .sorting_desc { background: url('../images/sort_desc.png') no-repeat center right; }
+
+table.table thead .sorting_asc_disabled { background: url('../images/sort_asc_disabled.png') no-repeat center right; }
+table.table thead .sorting_desc_disabled { background: url('../images/sort_desc_disabled.png') no-repeat center right; }
+
+table.dataTable thead .sorting:after {
+  opacity: 0.2;
+  content: "";
+  /* sort */
+}
+table.dataTable thead .sorting_asc:after {
+  content: "";
+  /* sort-by-attributes */
+}
+table.dataTable thead .sorting_desc:after {
+  content: "";
+  /* sort-by-attributes-alt */
+}
+  
+
+
+.pagination > li > a, .pagination > li > span
+{background:#fff;border: 1px solid #ddd;}
+
+.dataTables_wrapper .dataTables_paginate li.disabled a {
+    color: #c7c7c7;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button{ padding:0px;border-bottom: 1px solid #ddd;}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover{border:none}
+
+
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+    z-index: 2;
+    color: #fff;
+    cursor: default;
+    background-color: #65cea7;
+    border-color: #65cea7;
+}
+
+table.table thead tr th,table.table tfoot tr th{
+	text-align:center;
+}
+
+.acenter{text-align:center;}
+td.highlight { background-color: #66CDAA !important; color:#fff; border:1px solid #66CDAA }
+.table-hover > tbody > tr:hover,.table-hover > tbody > tr.selected {
+  background-color: #66CDAA; color:#fff;
+}
+.table>thead>tr>th {    
+    border-bottom: 2px solid #66CDAA; 
+}
+.table>tfoot>tr>th {    
+    border-top: 2px solid #66CDAA;
+}

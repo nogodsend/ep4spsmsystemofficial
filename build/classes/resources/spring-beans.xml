@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- <bean id="userDao" class="com.haph.spsm.master.dao.impl.UserDao">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+	</bean>
+
+	<bean id="userService" class="com.haph.spsm.master.service.impl.UserService">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+	
+	<bean name="userManager" parent="transactionProxy">
+		<property name="target" ref="userService"></property>
+	</bean>	 -->
+</beans>

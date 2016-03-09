@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+	
+	 <!-- 扫描com及子包，自动实例化带@注释的实例，这里排除@Controller，所有controller的实例化在 mvc-config中完成 -->  
+   <context:component-scan base-package="com">  
+ <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/> 
+</context:component-scan>  
+    
+		
+
+
+	<!-- 加载配置文件 -->
+	<context:property-placeholder location="classpath:resources/property/jdbc.properties"
+		file-encoding="utf-8" ignore-unresolvable="true" />
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close" p:driverClass="${jdbc.driverClassName}"
+		p:jdbcUrl="${jdbc.url}" p:user="${jdbc.username}" p:password="${jdbc.password}"
+		p:testConnectionOnCheckout="${jdbc.c3p0.testConnectionOnCheckout}"
+		p:testConnectionOnCheckin="${jdbc.c3p0.testConnectionOnCheckin}"
+		p:idleConnectionTestPeriod="${jdbc.c3p0.idleConnectionTestPeriod}"
+		p:initialPoolSize="${jdbc.c3p0.initialPoolSize}" p:minPoolSize="${jdbc.c3p0.minPoolSize}"
+		p:maxPoolSize="${jdbc.c3p0.maxPoolSize}" p:maxIdleTime="${jdbc.c3p0.maxIdleTime}" />
+	
+	<!-- 配置SessionFactory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" destroy-method="destroy">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mappingLocations">
+			<list>
+				<!-- 可以加多个包 -->
+				  <value>classpath:com/haph/spsm/**/entity/mapping/*.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">  
+      			<property name="sessionFactory" ref="sessionFactory"></property>  
+ 		</bean> 
+ 		
+	<!-- 配置一个事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+        <tx:method name="save*" propagation="REQUIRED"/>
+        <tx:method name="add*" propagation="REQUIRED" rollback-for="Exception"/>
+        <tx:method name="create*" propagation="REQUIRED"/>
+        <tx:method name="insert*" propagation="REQUIRED"/>
+        <tx:method name="update*" propagation="REQUIRED"/>
+        <tx:method name="merge*" propagation="REQUIRED"/>
+        <tx:method name="del*" propagation="REQUIRED"/>
+        <tx:method name="remove*" propagation="REQUIRED"/>
+        <tx:method name="put*" propagation="REQUIRED"/>
+        <tx:method name="archive*" propagation="REQUIRED"/>
+        <tx:method name="pause*" propagation="REQUIRED"/>
+        <!--hibernate4必须配置为开启事务 否则 getCurrentSession()获取不到 -->
+        <tx:method name="get*" propagation="REQUIRED" read-only="true"/>
+        <tx:method name="count*" propagation="REQUIRED" read-only="true"/>
+        <tx:method name="find*" propagation="REQUIRED" read-only="true"/>
+        <tx:method name="list*" propagation="REQUIRED" read-only="true"/>
+        <tx:method name="query" propagation="REQUIRED" read-only="true"/>
+        <tx:method name="*" propagation="REQUIRED"/>
+    </tx:attributes>
+	</tx:advice>
+ 
+	<!-- 对业务逻辑层 事务控制 -->
+	<aop:config expose-proxy="true">
+	
+	    
+	   <!--  <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.haph.spsm.core.service..*.*(..))" /> -->
+	    <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.haph.spsm.master.service..*.*(..))" />
+	    
+	    <!-- <aop:pointcut id="userManager" expression="execution(* com.haph.spsm.master.service..*.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="userManager"/> -->
+	</aop:config>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+</beans>
